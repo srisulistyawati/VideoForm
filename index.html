@@ -115,6 +115,8 @@
     };
     video.onended = function() {
       nextBtn.style.display = 'inline-block';
+      // Scroll otomatis ke tombol "Lanjut ke Google Form"
+      nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
 
     function goToForm() {

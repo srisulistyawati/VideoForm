@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Video Pembelajaran</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background: #111;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    h2 {
+      color: #fff;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    video {
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      border: 2px solid #222;
+      background: #222;
+      border-radius: 12px;
+      margin: 0 auto 16px auto;
+      display: block;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    }
+
+    #seekwarn {
+      display: none;
+      margin-top: 10px;
+      color: #ff3c3c;
+      font-weight: bold;
+      background: #fff0f0;
+      border-radius: 7px;
+      padding: 7px 15px;
+      box-shadow: 0 2px 6px rgba(255,60,60,0.1);
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #playBtn, #nextBtn {
+      margin-top: 20px;
+      padding: 14px 32px;
+      font-size: 17px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .2s;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+      display: inline-block;
+    }
+
+    #playBtn {
+      background-color: #28a745;
+      color: #fff;
+    }
+    #playBtn:hover { background-color: #218838; }
+
+    #nextBtn {
+      display: none;
+      background-color: #007bff;
+      color: #fff;
+    }
+    #nextBtn:hover { background-color: #0056b3; }
+
+    /* Responsif */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      video {
+        max-width: 100vw;
+      }
+      #playBtn, #nextBtn {
+        padding: 11px 16px;
+        font-size: 15px;
+        margin-top: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>Tonton Video Sampai Selesai</h2>
+
+  <video id="vid" playsinline webkit-playsinline>
+    <source src="https://res.cloudinary.com/dhnnlvllh/video/upload/v1752333541/vidio1_t3vdik.mp4" type="video/mp4">
+    Browser Anda tidak mendukung video.
+  </video>
+
+  <button id="playBtn">▶️ Play</button>
+  <div id="seekwarn">⛔ Jangan skip videonya!</div>
+  <button id="nextBtn" onclick="goToForm()">Lanjut ke Form</button>
+
+  <script>
+    const video = document.getElementById('vid');
+    const playBtn = document.getElementById('playBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const seekwarn = document.getElementById('seekwarn');
+
+    let lastTime = 0;
+    let seeking = false;
+    let allowSeek = false;
+
+    window.onload = function() {
+      playBtn.style.display = 'inline-block';
+    };
+
+    playBtn.onclick = function() {
+      video.play();
+      playBtn.style.display = 'none';
+    };
+
+    video.addEventListener('timeupdate', function() {
+      if (!seeking) lastTime = video.currentTime;
+    });
+
+    video.addEventListener('seeking', function() {
+      if (!allowSeek && Math.abs(video.currentTime - lastTime) > 1) {
+        seeking = true;
+        video.currentTime = lastTime;
+        seekwarn.style.display = 'block';
+        setTimeout(() => seekwarn.style.display = 'none', 1500);
+        seeking = false;
+      }
+    });
+
+    video.addEventListener('ratechange', function() {
+      if (video.playbackRate !== 1) {
+        video.playbackRate = 1;
+      }
+    });
+
+    video.onended = function() {
+      allowSeek = true;
+      nextBtn.style.display = "inline-block";
+      window.onbeforeunload = null;
+    };
+
+    window.history.pushState(null, null, window.location.href);
+    window.onpopstate = function(event) {
+      window.history.pushState(null, null, window.location.href);
+      alert('Anda harus menonton video sampai selesai sebelum kembali!');
+    };
+
+    window.onbeforeunload = function() {
+      return "Anda harus menonton video sampai selesai sebelum meninggalkan halaman ini!";
+    };
+
+    function goToForm() {
+      window.open("https://docs.google.com/forms/d/e/1FAIpQLSe8qB8SqK6npqJEp_04z78sFhFvBKGDRGwEVdHPJy_nLbykng/viewform?usp=dialog", '_blank');
+      window.close();
+    }
+  </script>
+</body>
+</html>
